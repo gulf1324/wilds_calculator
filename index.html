@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Field Abacus</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Uncial+Antiqua&family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
 /* ═══════════════════════════════════════════════
    PALETTE  —  jungle night / oxidised iron / amber
@@ -54,10 +54,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cinzel', serif;
-  overflow: hidden;
+  font-family: 'Uncial Antiqua', 'Cinzel', serif;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
   cursor: default;
+  padding: 20px 12px;
 }
 
 /* ── JUNGLE BACKGROUND LAYERS ── */
@@ -68,24 +70,20 @@ body {
   z-index: 0;
 }
 
-/* deep jungle gradient */
 .bg-gradient {
   position: absolute;
   inset: 0;
   background:
-    /* top canopy shadow */
     linear-gradient(to bottom,
       #020804 0%,
       #061209 18%,
       #081a09 40%,
       #071508 70%,
       #040d05 100%),
-    /* horizontal fog bands */
     radial-gradient(ellipse 120% 40% at 50% 60%,
       rgba(15,35,12,0.6) 0%, transparent 100%);
 }
 
-/* SVG noise grain overlay — organic texture */
 .bg-grain {
   position: absolute;
   inset: 0;
@@ -94,7 +92,6 @@ body {
   background-size: 300px 300px;
 }
 
-/* subtle diagonal leaf-vein lines */
 .bg-veins {
   position: absolute;
   inset: 0;
@@ -113,13 +110,20 @@ body {
   );
 }
 
-/* vignette */
 .bg-vignette {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse 75% 75% at 50% 50%,
     transparent 30%,
     rgba(0,0,0,0.75) 100%);
+}
+
+/* ── MOUSE LIGHT ── */
+#mouse-light {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
 }
 
 /* ── FIREFLIES ── */
@@ -130,26 +134,32 @@ body {
   pointer-events: none;
 }
 
+/* ── DUST PARTICLE LAYER ── */
+#dust-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+
 /* ── MAIN WRAP ── */
 .calc-wrap {
   position: relative;
   z-index: 10;
-  /* slight perspective tilt — like device resting on a surface */
   perspective: 900px;
 }
 
 /* ── DEVICE SHELL ── */
 .calculator {
   position: relative;
-  width: 360px;
+  width: 360px;           /* 고정 너비 (작은 화면에서는 100%로 자동 축소) */
+  max-width: 100%;
 
-  /* thick iron plate — multi-layer background for depth */
   background:
-    /* top-face worn highlight */
     linear-gradient(160deg,
       rgba(74,72,56,0.5) 0%,
       transparent 40%),
-    /* base iron colour */
     linear-gradient(180deg,
       var(--iron-light) 0%,
       var(--iron-mid)   50%,
@@ -158,35 +168,60 @@ body {
   border-radius: 6px 6px 8px 8px;
   padding: 22px 20px 20px;
 
-  /* layered box-shadow = thick plate illusion */
   box-shadow:
-    /* top-edge brass rim light */
     0 -1px 0 var(--brass-dim),
-    /* outer border */
     0 0 0 1px rgba(58,59,42,0.9),
-    /* 1st depth layer */
     0 4px 0 1px #111110,
-    /* 2nd depth layer */
     0 8px 0 1px #0a0a09,
-    /* 3rd depth layer */
     0 12px 0 1px #070706,
-    /* ambient drop shadow */
     0 18px 50px rgba(0,0,0,0.95),
     0 6px 16px rgba(0,0,0,0.8),
-    /* inner bevel top */
     inset 0 2px 3px rgba(255,255,255,0.06),
-    /* inner bevel bottom */
     inset 0 -2px 4px rgba(0,0,0,0.5),
-    /* left edge shadow */
     inset 3px 0 6px rgba(0,0,0,0.25),
-    /* right edge shadow */
     inset -3px 0 6px rgba(0,0,0,0.25);
 
-  /* subtle 3D tilt — no preserve-3d, it breaks button hit-testing */
   transform: rotateX(2deg);
 }
 
-/* ── BRASS TOP TRIM ── */
+.calculator .aged-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px 6px 8px 8px;
+  pointer-events: none;
+  z-index: 50;
+  background:
+    linear-gradient(138deg,
+      transparent 24%,
+      rgba(255,255,255,0.055) 24.3%, rgba(255,255,255,0.055) 24.65%,
+      rgba(0,0,0,0.08)        24.65%, rgba(0,0,0,0.08)        24.9%,
+      transparent 25.2%),
+    linear-gradient(122deg,
+      transparent 53%,
+      rgba(255,255,255,0.06)  53.25%, rgba(255,255,255,0.06)  53.5%,
+      rgba(0,0,0,0.10)        53.5%,  rgba(0,0,0,0.10)        53.75%,
+      transparent 54.1%),
+    linear-gradient(160deg,
+      transparent 68%,
+      rgba(255,255,255,0.03)  68.2%, rgba(255,255,255,0.03) 68.4%,
+      transparent 68.6%),
+    radial-gradient(ellipse 55% 38% at 6% 94%,   rgba(0,0,0,0.38) 0%, transparent 100%),
+    radial-gradient(ellipse 45% 32% at 95% 5%,   rgba(0,0,0,0.28) 0%, transparent 100%),
+    radial-gradient(ellipse 16% 10% at 18% 52%,  rgba(0,0,0,0.14) 0%, transparent 100%),
+    radial-gradient(ellipse 12% 8%  at 88% 68%,  rgba(0,0,0,0.10) 0%, transparent 100%),
+    linear-gradient(to right,  rgba(0,0,0,0.22) 0%, transparent 7%, transparent 93%, rgba(0,0,0,0.22) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, transparent 5%, transparent 88%, rgba(0,0,0,0.32) 100%);
+}
+
+.calculator .gouge-svg {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px 6px 8px 8px;
+  pointer-events: none;
+  z-index: 51;
+  overflow: visible;
+}
+
 .calculator::before {
   content: '';
   position: absolute;
@@ -204,7 +239,6 @@ body {
   box-shadow: 0 1px 6px rgba(184,137,42,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
-/* ── BOTTOM EDGE THICKNESS (simulates plate depth) ── */
 .plate-bottom {
   position: absolute;
   bottom: -12px; left: 3px; right: 3px;
@@ -214,7 +248,6 @@ body {
   box-shadow: 0 6px 12px rgba(0,0,0,0.7);
 }
 
-/* rivet corners */
 .rivet {
   position: absolute;
   width: 10px; height: 10px;
@@ -230,7 +263,6 @@ body {
 .rivet.bl { bottom: 10px; left: 10px; }
 .rivet.br { bottom: 10px; right: 10px; }
 
-/* corner bracket lines */
 .bracket {
   position: absolute;
   width: 22px; height: 22px;
@@ -246,28 +278,24 @@ body {
 /* ── DISPLAY PANEL ── */
 .display {
   position: relative;
+  width: 100%;                    /* 너비 고정 보장 */
   margin-bottom: 16px;
 
-  /* recessed into the plate */
   background: linear-gradient(160deg, #0a0f06, #0e1509, #080d05);
   border-radius: 4px;
   padding: 14px 16px 12px;
   overflow: hidden;
 
   box-shadow:
-    /* deep inset recess */
     inset 0 3px 8px rgba(0,0,0,0.9),
     inset 0 1px 3px rgba(0,0,0,0.7),
     inset 2px 0 4px rgba(0,0,0,0.4),
     inset -2px 0 4px rgba(0,0,0,0.4),
-    /* phosphor glow from within */
     inset 0 0 24px rgba(100,160,60,0.06),
-    /* outer rim */
     0 0 0 1px rgba(30,30,20,0.9),
     0 0 0 2px rgba(50,48,34,0.5);
 }
 
-/* phosphor scanlines */
 .display::before {
   content: '';
   position: absolute;
@@ -283,7 +311,6 @@ body {
   z-index: 2;
 }
 
-/* subtle green phosphor bloom */
 .display::after {
   content: '';
   position: absolute;
@@ -295,24 +322,25 @@ body {
 }
 
 .display-expr {
-  font-family: 'Crimson Pro', serif;
+  font-family: 'Crimson Pro', Georgia, serif;
   font-style: italic;
-  font-size: 13px;
+  font-weight: 600;
+  font-size: 22px;
   color: var(--display-dim);
   text-align: right;
-  min-height: 18px;
+  min-height: 28px;
   letter-spacing: 1px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   position: relative;
   z-index: 3;
 }
 
 .display-num {
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
+  font-family: Papyrus, 'Uncial Antiqua', fantasy;
+  font-weight: 400;
   font-size: 44px;
   color: var(--display-ink);
   text-align: right;
@@ -337,7 +365,6 @@ body {
   100% { color: var(--display-ink); text-shadow: 0 0 8px rgba(160,200,100,0.5); }
 }
 
-/* shockwave on display */
 .shockwave {
   position: absolute;
   inset: -3px;
@@ -381,7 +408,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  /* extra room so translateY(7px) pressed buttons aren't clipped */
+  width: 100%;                    /* 너비 고정 보장 */
   padding-bottom: 10px;
   margin-bottom: -10px;
 }
@@ -393,16 +420,15 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
+  font-family: Papyrus, 'Uncial Antiqua', fantasy;
+  font-weight: 400;
   font-size: 17px;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   outline: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   overflow: hidden;
 
-  /* iron key top-face */
   background: linear-gradient(165deg,
     var(--iron-hi)    0%,
     var(--iron-light) 30%,
@@ -415,48 +441,35 @@ body {
   transition: transform 80ms cubic-bezier(.15,.8,.2,1),
               box-shadow 80ms cubic-bezier(.15,.8,.2,1);
 
-  /* 3D plate depth: stacked shadows */
   box-shadow:
-    /* top-face edge highlight */
     0 0 0 1px rgba(60,59,42,0.8),
-    /* bottom plate layers — creates thick key illusion */
     0  3px 0 rgba(14,14,10,1),
     0  6px 0 rgba(10,10,8,0.9),
     0  8px 0 rgba(7,7,6,0.8),
-    /* ambient drop */
     0 10px 12px rgba(0,0,0,0.6),
-    /* inner top bevel */
     inset 0 1px 2px rgba(255,255,255,0.07),
-    /* inner bottom dark */
     inset 0 -2px 3px rgba(0,0,0,0.55),
-    /* inner left */
     inset 2px 0 3px rgba(255,255,255,0.03),
-    /* inner right */
     inset -2px 0 3px rgba(0,0,0,0.2);
 }
 
-/* worn scratches on button top */
 .btn::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    /* diagonal scratch 1 */
     linear-gradient(125deg,
       transparent 30%, rgba(255,255,255,0.025) 31%,
       rgba(255,255,255,0.025) 31.5%, transparent 32.5%),
-    /* diagonal scratch 2 */
     linear-gradient(115deg,
       transparent 55%, rgba(255,255,255,0.015) 55.5%,
       rgba(255,255,255,0.015) 56%, transparent 57%),
-    /* top gloss */
     linear-gradient(180deg,
       rgba(255,255,255,0.05) 0%, transparent 40%);
   pointer-events: none;
   border-radius: 4px;
 }
 
-/* ── PRESSED STATE ── */
 .btn:active, .btn.pressed {
   transform: translateY(7px);
   box-shadow:
@@ -469,26 +482,110 @@ body {
     inset -2px 0 4px rgba(0,0,0,0.3);
 }
 
-/* ── HIT FLASH ── */
-.btn .hit-flash {
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-  background: radial-gradient(ellipse at 50% 50%,
-    rgba(255,255,255,0.16) 0%,
-    transparent 70%);
-  opacity: 0;
+.hit-impact {
+  position: fixed;
   pointer-events: none;
-  animation: hitFlash 0.25s ease-out forwards;
+  z-index: 300;
+  transform: translate(-50%, -50%) scale(0.3);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255,240,140,0.95) 0%,
+    rgba(255,190,50,0.65)  28%,
+    rgba(200,110,20,0.30)  55%,
+    transparent            75%);
+  opacity: 0;
+  animation: impactBurst 0.45s cubic-bezier(.05,.7,.2,1) forwards;
 }
-@keyframes hitFlash {
-  0%   { opacity: 1; transform: scale(0.7); }
-  100% { opacity: 0; transform: scale(1.15); }
+.hit-impact::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,220,70,0.9);
+  box-shadow: 0 0 14px rgba(255,200,50,0.7), inset 0 0 8px rgba(255,200,50,0.3);
+  opacity: 0;
+  animation: impactRing1 0.45s ease-out forwards;
+}
+.hit-impact::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,170,30,0.45);
+  opacity: 0;
+  animation: impactRing2 0.58s ease-out 0.04s forwards;
+}
+.hit-impact.heavy {
+  width: 130px;
+  height: 130px;
+  background: radial-gradient(circle,
+    rgba(255,220,100,1.0)  0%,
+    rgba(240,150,30,0.75)  25%,
+    rgba(180,70,10,0.35)   55%,
+    transparent            75%);
+}
+
+@keyframes impactBurst {
+  0%   { opacity: 1;   transform: translate(-50%,-50%) scale(0.25); }
+  35%  { opacity: 0.9; transform: translate(-50%,-50%) scale(1.0);  }
+  100% { opacity: 0;   transform: translate(-50%,-50%) scale(1.6);  }
+}
+@keyframes impactRing1 {
+  0%   { opacity: 1;   transform: scale(0.5); }
+  50%  { opacity: 0.7; }
+  100% { opacity: 0;   transform: scale(1.7); }
+}
+@keyframes impactRing2 {
+  0%   { opacity: 0.6; transform: scale(0.7); }
+  100% { opacity: 0;   transform: scale(2.2); }
+}
+
+/* ── CUSTOM CURSOR — golden arrow ── */
+body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'%3E%3Cdefs%3E%3Cfilter id='g' x='-60%25' y='-60%25' width='220%25' height='220%25'%3E%3CfeGaussianBlur stdDeviation='2.0' result='blur'/%3E%3CfeComposite in='SourceGraphic' in2='blur' operator='over'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23g)'%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%237a5010' stroke='%23a07828' stroke-width='1.2' stroke-linejoin='round'/%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%23c89030' opacity='0.28'/%3E%3C/g%3E%3C/svg%3E") 3 2, auto;
+}
+
+.btn {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'%3E%3Cdefs%3E%3Cfilter id='g' x='-60%25' y='-60%25' width='220%25' height='220%25'%3E%3CfeGaussianBlur stdDeviation='2.5' result='blur'/%3E%3CfeComposite in='SourceGraphic' in2='blur' operator='over'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23g)'%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%23f0c030' stroke='%23fff8b0' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%23ffe87a' opacity='0.55'/%3E%3C/g%3E%3C/svg%3E") 3 2, pointer;
+}
+
+#cursor-glow {
+  position: fixed;
+  pointer-events: none;
+  z-index: 250;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-30%, -25%);
+  background: radial-gradient(circle,
+    rgba(200,160,50,0.7)  0%,
+    rgba(180,120,20,0.35) 40%,
+    rgba(140,90,10,0.08)  70%,
+    transparent           100%);
+  box-shadow:
+    0 0 4px  rgba(200,160,50,0.7),
+    0 0 10px rgba(170,120,20,0.35),
+    0 0 20px rgba(140,90,10,0.12);
+  left: -100px; top: -100px;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+#cursor-glow.bright {
+  background: radial-gradient(circle,
+    rgba(255,245,140,1.0) 0%,
+    rgba(255,210,60,0.75) 35%,
+    rgba(220,150,20,0.22) 65%,
+    transparent           100%);
+  box-shadow:
+    0 0 6px  rgba(255,235,90,1.0),
+    0 0 16px rgba(255,200,50,0.7),
+    0 0 30px rgba(200,140,20,0.3);
 }
 
 /* ── NUM BUTTONS ── */
 .btn-num {
-  /* slightly lighter worn iron */
   background: linear-gradient(165deg,
     #383628 0%,
     #2a2920 30%,
@@ -563,19 +660,19 @@ body {
 .btn-clear {
   background: linear-gradient(165deg, #2e1008, #221008, #180a05, #100603);
   color: #b05030;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 2px;
 }
 .btn-fn {
   background: linear-gradient(165deg, #282618, #1e1d14, #181712, #110f0b);
   color: #7a7258;
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 1px;
 }
 
 .btn-zero { grid-column: span 2; }
 
-/* hover (pointer devices) */
+/* hover */
 @media (hover: hover) {
   .btn-num:hover {
     background: linear-gradient(165deg, #42402e, #343220, #28271c, #1c1b14);
@@ -600,15 +697,6 @@ body {
   }
 }
 
-/* ── DUST PARTICLE LAYER ── */
-#dust-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 200;
-  overflow: hidden;
-}
-
 /* ── ERROR QUAKE ── */
 @keyframes quake {
   0%,100% { transform: rotateX(2deg) translateX(0); }
@@ -619,17 +707,6 @@ body {
 }
 .calculator.quake { animation: quake 0.45s ease; }
 
-/* ── FOOTER ── */
-.calc-footer {
-  margin-top: 24px;
-  text-align: center;
-  font-family: 'Crimson Pro', serif;
-  font-style: italic;
-  font-size: 11px;
-  letter-spacing: 4px;
-  color: rgba(120,100,50,0.4);
-  text-shadow: none;
-}
   </style>
 </head>
 <body>
@@ -642,15 +719,16 @@ body {
   <div class="bg-vignette"></div>
 </div>
 
+<!-- Mouse light canvas -->
+<canvas id="mouse-light"></canvas>
+
 <!-- Firefly canvas -->
 <canvas id="firefly-canvas"></canvas>
 
 <!-- Dust layer -->
 <div id="dust-layer"></div>
 
-<!-- ═══════════════════════════════════════
-     FIREFLY ANIMATION
-═══════════════════════════════════════ -->
+<!-- FIREFLY ANIMATION -->
 <script>
 (function() {
   const canvas = document.getElementById('firefly-canvas');
@@ -664,7 +742,6 @@ body {
   resize();
   window.addEventListener('resize', resize);
 
-  // Each firefly: wandering with organic easing
   const COUNT = 38;
   const flies = [];
 
@@ -675,22 +752,17 @@ body {
       tx:   Math.random() * window.innerWidth,
       ty:   Math.random() * window.innerHeight,
       size: 1.2 + Math.random() * 2.0,
-      // glow pulse
       phase:  Math.random() * Math.PI * 2,
       pulseSpeed: 0.012 + Math.random() * 0.025,
-      // wander speed
       speed: 0.2 + Math.random() * 0.5,
-      // how often to pick new target (frames)
       nextTarget: Math.floor(Math.random() * 200 + 80),
       frameCount: 0,
-      // colour: warm yellow-amber
-      hue: 42 + Math.random() * 18,  // 42–60 deg
+      hue: 42 + Math.random() * 18,
       opacity: 0.3 + Math.random() * 0.6,
     });
   }
 
   function pickTarget(fly) {
-    // bias toward centre-ish so they don't all drift to edges
     fly.tx = W * 0.1 + Math.random() * W * 0.8;
     fly.ty = H * 0.1 + Math.random() * H * 0.8;
     fly.nextTarget = Math.floor(Math.random() * 260 + 100);
@@ -702,7 +774,6 @@ body {
     const alpha = fly.opacity * (0.4 + 0.6 * pulse);
     const r     = fly.size * (0.7 + 0.5 * pulse);
 
-    // outer glow
     const grad = ctx.createRadialGradient(fly.x, fly.y, 0, fly.x, fly.y, r * 8);
     grad.addColorStop(0,   `hsla(${fly.hue},100%,75%,${alpha * 0.8})`);
     grad.addColorStop(0.2, `hsla(${fly.hue},90%,65%,${alpha * 0.4})`);
@@ -714,7 +785,6 @@ body {
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // bright core
     ctx.beginPath();
     ctx.arc(fly.x, fly.y, r, 0, Math.PI * 2);
     ctx.fillStyle = `hsla(${fly.hue + 10},100%,90%,${alpha})`;
@@ -725,12 +795,10 @@ body {
     ctx.clearRect(0, 0, W, H);
 
     for (const fly of flies) {
-      // wander toward target with easing
       const dx = fly.tx - fly.x;
       const dy = fly.ty - fly.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
 
-      // gentle organic drift
       fly.x += (dx / Math.max(dist, 1)) * fly.speed + (Math.random() - 0.5) * 0.4;
       fly.y += (dy / Math.max(dist, 1)) * fly.speed + (Math.random() - 0.5) * 0.4;
 
@@ -748,15 +816,126 @@ body {
 })();
 </script>
 
-<!-- ═══════════════════════════════════════
-     AUDIO ENGINE  —  deep weapon impacts
-═══════════════════════════════════════ -->
+<!-- MOUSE LIGHT + CURSOR PARTICLES -->
+<script>
+(function() {
+  const canvas = document.getElementById('mouse-light');
+  const ctx    = canvas.getContext('2d');
+  let W, H;
+  let mx = -999, my = -999;
+  let tx = -999, ty = -999;
+  let visible = false;
+
+  const particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  document.addEventListener('mousemove', e => {
+    tx = e.clientX;
+    ty = e.clientY;
+    visible = true;
+    if (Math.random() < 0.55) spawnParticle(tx, ty);
+  });
+  document.addEventListener('mouseleave', () => { visible = false; });
+
+  function spawnParticle(x, y) {
+    particles.push({
+      x: x + (Math.random() - 0.5) * 8,
+      y: y + (Math.random() - 0.5) * 8,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: 0.4 + Math.random() * 1.2,
+      size: 1.2 + Math.random() * 2.2,
+      life: 1.0,
+      decay: 0.028 + Math.random() * 0.032,
+      hue: 42 + Math.random() * 16,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    mx += (tx - mx) * 0.18;
+    my += (ty - my) * 0.18;
+
+    if (visible && tx > -900) {
+      const g1 = ctx.createRadialGradient(mx, my, 0, mx, my, 200);
+      g1.addColorStop(0,   'rgba(255,210,60,0.09)');
+      g1.addColorStop(0.4, 'rgba(220,160,30,0.05)');
+      g1.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(mx, my, 200, 0, Math.PI * 2);
+      ctx.fillStyle = g1;
+      ctx.fill();
+
+      const g2 = ctx.createRadialGradient(mx, my, 0, mx, my, 65);
+      g2.addColorStop(0,   'rgba(255,235,120,0.30)');
+      g2.addColorStop(0.5, 'rgba(240,190,50,0.14)');
+      g2.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(mx, my, 65, 0, Math.PI * 2);
+      ctx.fillStyle = g2;
+      ctx.fill();
+
+      const g3 = ctx.createRadialGradient(mx, my, 0, mx, my, 14);
+      g3.addColorStop(0,   'rgba(255,252,210,0.92)');
+      g3.addColorStop(0.4, 'rgba(255,220,80,0.60)');
+      g3.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(mx, my, 14, 0, Math.PI * 2);
+      ctx.fillStyle = g3;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(mx, my, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,240,0.95)';
+      ctx.fill();
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vy *= 1.04;
+      p.vx *= 0.97;
+      p.life -= p.decay;
+
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+      const alpha = p.life * 0.85;
+      const r     = p.size * p.life;
+
+      const pg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 4);
+      pg.addColorStop(0,   `hsla(${p.hue},100%,75%,${alpha * 0.7})`);
+      pg.addColorStop(0.4, `hsla(${p.hue},90%,60%,${alpha * 0.25})`);
+      pg.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 4, 0, Math.PI * 2);
+      ctx.fillStyle = pg;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue + 8},100%,88%,${alpha})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+<!-- AUDIO -->
 <script>
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let AC;
 function initAC() { if (!AC) AC = new AudioCtx(); }
 
-/* ── make a pitched noise burst ── */
 function noiseBuffer(dur, decay) {
   const buf  = AC.createBuffer(1, AC.sampleRate * dur, AC.sampleRate);
   const d    = buf.getChannelData(0);
@@ -769,10 +948,7 @@ function playImpact(type) {
   initAC();
   const t = AC.currentTime;
 
-  // Shared builder: noise thud + sub sine
-  // weight 0–1 controls heaviness, pitch controls sub freq
   function thud(weight, subFreq, subDecay, noiseDecay, noiseFilter) {
-    // noise body
     const buf  = AC.createBuffer(1, AC.sampleRate * (0.15 + weight * 0.35), AC.sampleRate);
     const d    = buf.getChannelData(0);
     for (let i = 0; i < d.length; i++)
@@ -788,7 +964,6 @@ function playImpact(type) {
     src.connect(filt); filt.connect(gain); gain.connect(AC.destination);
     src.start(t);
 
-    // sub sine — the actual "thud" feeling
     const sub  = AC.createOscillator();
     const subG = AC.createGain();
     sub.type = 'sine';
@@ -801,17 +976,11 @@ function playImpact(type) {
   }
 
   if (type === 'num') {
-    // lightest thud — finger on stone
     thud(0.2, 90, 0.14, 2.5, 180);
-
   } else if (type === 'op') {
-    // medium thud — heavier key
     thud(0.5, 70, 0.20, 2.0, 160);
-
   } else if (type === 'eq') {
-    // heaviest thud — greatsword slam
     thud(1.0, 52, 0.38, 1.6, 140);
-    // second sub layer for depth
     const sub2  = AC.createOscillator();
     const sub2G = AC.createGain();
     sub2.type = 'sine';
@@ -821,17 +990,13 @@ function playImpact(type) {
     sub2G.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
     sub2.connect(sub2G); sub2G.connect(AC.destination);
     sub2.start(t + 0.02); sub2.stop(t + 0.45);
-
   } else if (type === 'clear') {
-    // stone scrape — slightly higher filter, shorter decay
     thud(0.35, 75, 0.17, 1.4, 220);
   }
 }
 </script>
 
-<!-- ═══════════════════════════════════════
-     DUST PARTICLES
-═══════════════════════════════════════ -->
+<!-- DUST -->
 <script>
 function spawnDust(btn, count, col) {
   const rect  = btn.getBoundingClientRect();
@@ -845,7 +1010,7 @@ function spawnDust(btn, count, col) {
     const spd = 25 + Math.random() * 65;
     const sz  = 1.5 + Math.random() * 4.5;
     const dur = 0.28 + Math.random() * 0.35;
-    const vy  = -15 - Math.random() * 25; // upward bias
+    const vy  = -15 - Math.random() * 25;
 
     p.style.cssText = `
       position:absolute;
@@ -871,11 +1036,33 @@ function spawnDust(btn, count, col) {
 }
 </script>
 
-<!-- ═══════════════════════════════════════
-     HTML STRUCTURE
-═══════════════════════════════════════ -->
+<!-- HTML STRUCTURE -->
+<div id="cursor-glow"></div>
+
 <div class="calc-wrap">
   <div class="calculator" id="calc">
+
+    <div class="aged-overlay"></div>
+
+    <svg class="gouge-svg" xmlns="http://www.w3.org/2000/svg">
+      <line x1="88"  y1="0"  x2="94"  y2="3"  stroke="rgba(0,0,0,0.75)"   stroke-width="2.2"/>
+      <line x1="88"  y1="0"  x2="94"  y2="3"  stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>
+      <line x1="268" y1="1"  x2="278" y2="0"  stroke="rgba(0,0,0,0.55)"   stroke-width="1.6"/>
+      <line x1="268" y1="1"  x2="278" y2="0"  stroke="rgba(255,255,255,0.08)" stroke-width="0.6"/>
+      <line x1="0"  y1="148" x2="4"  y2="155" stroke="rgba(0,0,0,0.70)"   stroke-width="2.5"/>
+      <line x1="0"  y1="148" x2="4"  y2="155" stroke="rgba(255,255,255,0.10)" stroke-width="0.9"/>
+      <ellipse cx="2" cy="152" rx="3" ry="5"   fill="rgba(100,35,8,0.28)"/>
+      <line x1="360" y1="82"  x2="356" y2="88"  stroke="rgba(0,0,0,0.65)" stroke-width="2.0"/>
+      <line x1="360" y1="82"  x2="356" y2="88"  stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
+      <polyline points="360,230 355,234 360,238" fill="none"
+        stroke="rgba(0,0,0,0.60)" stroke-width="1.8" stroke-linejoin="round"/>
+      <polyline points="360,230 355,234 360,238" fill="none"
+        stroke="rgba(255,255,255,0.07)" stroke-width="0.6" stroke-linejoin="round"/>
+      <line x1="130" y1="100%" x2="165" y2="100%" stroke="rgba(0,0,0,0.50)" stroke-width="3"
+            stroke-dasharray="6 3" transform="translate(0,-1)"/>
+      <ellipse cx="8"   cy="95%"  rx="6" ry="4"  fill="rgba(90,28,6,0.32)"/>
+      <ellipse cx="352" cy="6"    rx="5" ry="3"  fill="rgba(80,24,4,0.22)"/>
+    </svg>
 
     <div class="rivet tl"></div>
     <div class="rivet tr"></div>
@@ -886,7 +1073,6 @@ function spawnDust(btn, count, col) {
     <div class="bracket bl"></div>
     <div class="bracket br"></div>
 
-    <!-- Display -->
     <div class="display" id="display">
       <div class="display-expr" id="expr"></div>
       <div class="display-num"  id="numDisplay">0</div>
@@ -894,9 +1080,7 @@ function spawnDust(btn, count, col) {
 
     <div class="divider"></div>
 
-    <!-- Button Grid -->
     <div class="btn-grid">
-
       <button class="btn btn-clear" data-action="clear">AC</button>
       <button class="btn btn-fn"    data-action="sign">+/−</button>
       <button class="btn btn-fn"    data-action="percent">%</button>
@@ -920,29 +1104,21 @@ function spawnDust(btn, count, col) {
       <button class="btn btn-num btn-zero" data-action="num" data-num="0">0</button>
       <button class="btn btn-num"          data-action="decimal">.</button>
       <button class="btn btn-eq"           data-action="equals">=</button>
-
     </div>
     <div class="plate-bottom"></div>
   </div>
-
-  <div class="calc-footer">Forged in the Forbidden Lands · Est. Year Unknown</div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     CALCULATOR LOGIC  (v3 — fully audited)
-═══════════════════════════════════════ -->
+<!-- CALCULATOR LOGIC (완전 수정) -->
 <script>
-  /* ────────────────────────────────────────
-     STATE
-  ──────────────────────────────────────── */
-  let current     = '0';   // string shown on display
-  let previous    = null;  // left operand (number)
-  let operator    = null;  // pending operator string
-  let lastOperand = null;  // right operand saved for repeat =
-  let lastOp      = null;  // operator saved for repeat =
-  let shouldReset = false; // next digit press replaces display
-  let freshResult = false; // result just produced; op continues chain
-  let expression  = '';    // top expression row text
+  let current     = '0';
+  let previous    = null;
+  let operator    = null;
+  let lastOperand = null;
+  let lastOp      = null;
+  let shouldReset = false;
+  let freshResult = false;
+  let expression  = '';
 
   const numEl   = document.getElementById('numDisplay');
   const exprEl  = document.getElementById('expr');
@@ -950,30 +1126,19 @@ function spawnDust(btn, count, col) {
   const calcEl  = document.getElementById('calc');
   const clearBtn = document.querySelector('[data-action="clear"]');
 
-  /* ────────────────────────────────────────
-     FORMATTING
-     - Rounds away floating-point noise
-     - Caps at 12 significant digits
-     - Falls back to exponential notation
-  ──────────────────────────────────────── */
   function fmt(val) {
     if (typeof val === 'string') return val;
     if (!isFinite(val)) return 'ERROR';
 
-    // For integers, skip toPrecision (it can round e.g. -999999999999 → -1000000000000)
-    // For decimals, toPrecision(10) kills float noise (0.1+0.2 → 0.3)
     let n = Number.isInteger(val) ? val : parseFloat(val.toPrecision(10));
     let s = n.toString();
 
-    // Integers ≤ 13 visible chars: display as-is
     if (Number.isInteger(n) && s.replace('-','').length <= 13) return s;
 
-    // Overflow → exponential, trimming trailing zeros from mantissa
     if (s.replace(/[-\.]/g,'').length > 12) {
       s = n.toExponential(5);
       s = s.replace(/(\.\d*?)0+(e)/, '$1$2').replace(/\.(e)/, '$1');
     }
-
     return s;
   }
 
@@ -988,10 +1153,9 @@ function spawnDust(btn, count, col) {
     updateClearLabel();
   }
 
-  /* AC when state is fully reset, C otherwise */
   function updateClearLabel() {
     const pristine = current === '0' && previous === null && operator === null
-                     && lastOp === null;
+                     && lastOperand === null && lastOp === null;
     clearBtn.textContent = pristine ? 'AC' : 'C';
   }
 
@@ -1002,9 +1166,6 @@ function spawnDust(btn, count, col) {
     el.addEventListener('animationend', () => el.remove());
   }
 
-  /* ────────────────────────────────────────
-     ARITHMETIC
-  ──────────────────────────────────────── */
   function applyOp(a, b, op) {
     switch (op) {
       case '+': return a + b;
@@ -1017,22 +1178,21 @@ function spawnDust(btn, count, col) {
     }
   }
 
-  /* ────────────────────────────────────────
-     INPUT HANDLERS
-  ──────────────────────────────────────── */
-
   function inputNum(n) {
     if (shouldReset) {
-      // Start fresh after an operator or result
+      if (freshResult) {
+        exprEl.textContent = '';
+        lastOperand = null;
+        lastOp = null;
+      }
       current     = (n === '.') ? '0.' : n;
       shouldReset = false;
       freshResult = false;
     } else {
-      if (n === '.' && current.includes('.')) return;          // no double decimal
-      if (current === '0'  && n !== '.') current = n;         // strip leading zero
+      if (n === '.' && current.includes('.')) return;
+      if (current === '0'  && n !== '.') current = n;
       else if (current === '-0' && n !== '.') current = '-' + n;
       else {
-        // Limit to 12 numeric digits (not counting '-' or '.')
         if (current.replace(/[-\.]/g, '').length >= 12) return;
         current += n;
       }
@@ -1042,12 +1202,10 @@ function spawnDust(btn, count, col) {
   }
 
   function inputOp(op) {
-    // If we have a pending operator AND the user typed a new number since,
-    // evaluate the chain first (e.g. 3 + 4 × → computes 3+4=7 first)
     if (operator !== null && !shouldReset) {
       const b = parseFloat(current);
       const r = applyOp(previous, b, operator);
-      if (r === null) return; // error already shown
+      if (r === null) return;
       previous = r;
       current  = String(r);
       exprEl.textContent = fmt(r) + ' ' + op;
@@ -1059,29 +1217,24 @@ function spawnDust(btn, count, col) {
     operator    = op;
     shouldReset = true;
     freshResult = false;
-    // Changing operator clears repeat state
     lastOperand = null;
     lastOp      = null;
-    expression  = exprEl.textContent;
     updateClearLabel();
   }
 
   function doEquals() {
     if (operator !== null && !shouldReset) {
-      // First =: store operands for potential repeat
       lastOperand = parseFloat(current);
       lastOp      = operator;
       finishCalc(previous, lastOperand, lastOp);
     } else if (lastOp !== null) {
-      // Repeat =: apply saved op to current result
       finishCalc(parseFloat(current), lastOperand, lastOp);
     }
-    // No operator ever set → = is a no-op
   }
 
   function finishCalc(a, b, op) {
     const result = applyOp(a, b, op);
-    if (result === null) return; // error shown inside applyOp
+    if (result === null) return;
 
     exprEl.textContent = fmt(a) + ' ' + op + ' ' + fmt(b) + ' =';
     current     = String(result);
@@ -1093,9 +1246,6 @@ function spawnDust(btn, count, col) {
     triggerShockwave();
   }
 
-  /* % — matches iOS Calculator behaviour:
-     · If a pending +/− operator exists: percentage OF previous  (200 + 5% → 200 + 10)
-     · Otherwise: divide by 100                                  (50% → 0.5)            */
   function doPercent() {
     if (current === '0') return;
     let val = parseFloat(current);
@@ -1106,28 +1256,28 @@ function spawnDust(btn, count, col) {
     }
     if (!isFinite(val)) { showError(); return; }
     current     = String(val);
-    shouldReset = false; // keep editing this value
+    shouldReset = false;
+    freshResult = false;
     render(current, false);
     updateClearLabel();
   }
 
-  /* +/− : toggle sign of current entry or result */
   function doSign() {
     if (current === '0') return;
     current = current.startsWith('-') ? current.slice(1) : '-' + current;
-    // If we just got a fresh result, toggling sign means we're editing again
     freshResult = false;
     render(current, false);
     updateClearLabel();
   }
 
-  /* C clears current entry; AC resets everything */
+  /* 완전 초기화 로직 수정 */
   function doClear() {
-    const isAC = clearBtn.textContent === 'AC';
     current     = '0';
     shouldReset = false;
     freshResult = false;
-    if (isAC) {
+
+    /* previous와 operator가 모두 null이면 완전 초기화 (AC 또는 결과 후 C) */
+    if (previous === null && operator === null) {
       previous    = null;
       operator    = null;
       lastOperand = null;
@@ -1135,16 +1285,17 @@ function spawnDust(btn, count, col) {
       expression  = '';
       exprEl.textContent = '';
     }
+    /* pending 연산 중이면 현재 입력만 지움 (기존 C 동작) */
+
     render(0, false);
     updateClearLabel();
   }
 
-  /* Backspace — only works while actively composing a number */
   function doBackspace() {
-    if (shouldReset || freshResult) return; // never edit a completed result
+    if (shouldReset || freshResult) return;
     if (current.length > 1) {
       current = current.slice(0, -1);
-      if (current === '-') current = '0'; // lone minus → 0
+      if (current === '-') current = '0';
     } else {
       current = '0';
     }
@@ -1152,9 +1303,6 @@ function spawnDust(btn, count, col) {
     updateClearLabel();
   }
 
-  /* ────────────────────────────────────────
-     ERROR STATE
-  ──────────────────────────────────────── */
   function showError() {
     numEl.textContent = 'ERROR';
     numEl.classList.remove('impact');
@@ -1163,7 +1311,7 @@ function spawnDust(btn, count, col) {
     calcEl.classList.remove('quake');
     void calcEl.offsetWidth;
     calcEl.classList.add('quake');
-    // Full reset after animation
+
     setTimeout(() => {
       current     = '0'; previous  = null; operator    = null;
       lastOperand = null; lastOp   = null; expression  = '';
@@ -1174,16 +1322,85 @@ function spawnDust(btn, count, col) {
     }, 650);
   }
 
-  /* ────────────────────────────────────────
-     BUTTON DISPATCH
-  ──────────────────────────────────────── */
-  function handleBtn(btn) {
+  /* CURSOR GLOW + TRAIL */
+  const cursorGlow = document.getElementById('cursor-glow');
+  let mouseX = -200, mouseY = -200;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursorGlow.style.left = mouseX + 'px';
+    cursorGlow.style.top  = mouseY + 'px';
+  });
+
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => cursorGlow.classList.add('bright'));
+    btn.addEventListener('mouseleave', () => cursorGlow.classList.remove('bright'));
+  });
+
+  let lastTrailX = -999, lastTrailY = -999;
+  setInterval(() => {
+    const dx = mouseX - lastTrailX;
+    const dy = mouseY - lastTrailY;
+    const moved = Math.sqrt(dx*dx + dy*dy);
+    if (moved < 1.5) return;
+    lastTrailX = mouseX; lastTrailY = mouseY;
+    const count = 2 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) spawnCursorParticle(mouseX, mouseY);
+  }, 25);
+
+  function spawnCursorParticle(x, y) {
+    const p   = document.createElement('div');
+    const sz  = 1.5 + Math.random() * 3;
+    const hue = 36 + Math.random() * 24;
+    const dur = 1.4 + Math.random() * 1.2;
+    const vx  = (Math.random() - 0.5) * 22;
+    const vy  = 30 + Math.random() * 55;
+
+    p.style.cssText = `
+      position:fixed;
+      left:${x}px; top:${y}px;
+      width:${sz}px; height:${sz}px;
+      border-radius:50%;
+      background: hsl(${hue},100%,74%);
+      box-shadow: 0 0 ${sz * 2.5}px hsl(${hue},100%,66%);
+      opacity:0.92;
+      pointer-events:none;
+      z-index:249;
+      will-change:transform,opacity;
+      transition: transform ${dur}s cubic-bezier(.15,.6,.3,1),
+                  opacity   ${dur * 0.85}s ease-out ${dur * 0.15}s;
+      transform: translate(-50%,-50%);
+    `;
+    document.body.appendChild(p);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      p.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px)) scale(0.1)`;
+      p.style.opacity = '0';
+    }));
+    setTimeout(() => p.remove(), dur * 1000 + 80);
+  }
+
+  function spawnHitImpact(x, y, heavy = false) {
+    const el = document.createElement('div');
+    el.className = heavy ? 'hit-impact heavy' : 'hit-impact';
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once: true });
+
+    if (heavy) {
+      for (let i = 0; i < 12; i++) spawnCursorParticle(x, y);
+    } else {
+      for (let i = 0; i < 4; i++) spawnCursorParticle(x, y);
+    }
+  }
+
+  function handleBtn(btn, px, py) {
     const action = btn.dataset.action;
 
-    const flash = document.createElement('div');
-    flash.className = 'hit-flash';
-    btn.appendChild(flash);
-    flash.addEventListener('animationend', () => flash.remove());
+    const heavy = (action === 'equals');
+    spawnHitImpact(px, py, heavy);
 
     switch (action) {
       case 'num':
@@ -1224,19 +1441,16 @@ function spawnDust(btn, count, col) {
     }
   }
 
-  /* ────────────────────────────────────────
-     POINTER EVENTS
-  ──────────────────────────────────────── */
   document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('pointerdown',  () => { btn.classList.add('pressed'); handleBtn(btn); });
+    btn.addEventListener('pointerdown', e => {
+      btn.classList.add('pressed');
+      handleBtn(btn, e.clientX, e.clientY);
+    });
     btn.addEventListener('pointerup',    () => btn.classList.remove('pressed'));
     btn.addEventListener('pointerleave', () => btn.classList.remove('pressed'));
     btn.addEventListener('pointercancel',() => btn.classList.remove('pressed'));
   });
 
-  /* ────────────────────────────────────────
-     KEYBOARD
-  ──────────────────────────────────────── */
   document.addEventListener('keydown', e => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
@@ -1270,12 +1484,12 @@ function spawnDust(btn, count, col) {
     if (btn) {
       e.preventDefault();
       btn.classList.add('pressed');
-      handleBtn(btn);
+      const r = btn.getBoundingClientRect();
+      handleBtn(btn, r.left + r.width / 2, r.top + r.height / 2);
       setTimeout(() => btn.classList.remove('pressed'), 140);
     }
   });
 
-  /* init */
   updateClearLabel();
 </script>
 </body>
