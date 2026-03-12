@@ -1,1 +1,1 @@
-https://gulf1324.github.io/wilds_calculator/
+https://gulf1324.github.io/fancyass_calculator
