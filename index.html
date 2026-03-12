@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Field Abacus</title>
-  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Uncial+Antiqua&family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
 /* ═══════════════════════════════════════════════
    PALETTE  —  jungle night / oxidised iron / amber
@@ -54,14 +54,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Uncial Antiqua', 'Cinzel', serif;
-  /* was overflow:hidden — caused clipping on small viewports */
-  overflow-x: hidden;
-  overflow-y: auto;
+  font-family: 'Cinzel', serif;
+  overflow: hidden;
   position: relative;
   cursor: default;
-  /* safe padding so calculator never touches viewport edge */
-  padding: 20px 12px;
 }
 
 /* ── JUNGLE BACKGROUND LAYERS ── */
@@ -126,14 +122,6 @@ body {
     rgba(0,0,0,0.75) 100%);
 }
 
-/* ── MOUSE LIGHT ── */
-#mouse-light {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-}
-
 /* ── FIREFLIES ── */
 #firefly-canvas {
   position: fixed;
@@ -153,8 +141,7 @@ body {
 /* ── DEVICE SHELL ── */
 .calculator {
   position: relative;
-  width: min(360px, 100%);
-  max-width: 360px;
+  width: 360px;
 
   /* thick iron plate — multi-layer background for depth */
   background:
@@ -197,57 +184,6 @@ body {
 
   /* subtle 3D tilt — no preserve-3d, it breaks button hit-testing */
   transform: rotateX(2deg);
-}
-
-/* ── WORN / AGED OVERLAY ── */
-.calculator .aged-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 6px 6px 8px 8px;
-  pointer-events: none;
-  z-index: 50;
-  background:
-    /* ── SURFACE SCRATCHES ── */
-    /* long diagonal scratch, upper-left to centre */
-    linear-gradient(138deg,
-      transparent 24%,
-      rgba(255,255,255,0.055) 24.3%, rgba(255,255,255,0.055) 24.65%,
-      rgba(0,0,0,0.08)        24.65%, rgba(0,0,0,0.08)        24.9%,
-      transparent 25.2%),
-    /* short harsh gouge, centre-right */
-    linear-gradient(122deg,
-      transparent 53%,
-      rgba(255,255,255,0.06)  53.25%, rgba(255,255,255,0.06)  53.5%,
-      rgba(0,0,0,0.10)        53.5%,  rgba(0,0,0,0.10)        53.75%,
-      transparent 54.1%),
-    /* faint hair scratch, lower area */
-    linear-gradient(160deg,
-      transparent 68%,
-      rgba(255,255,255,0.03)  68.2%, rgba(255,255,255,0.03) 68.4%,
-      transparent 68.6%),
-    /* ── GRIME & STAINS ── */
-    /* heavy grime — bottom-left corner */
-    radial-gradient(ellipse 55% 38% at 6% 94%,   rgba(0,0,0,0.38) 0%, transparent 100%),
-    /* grime — top-right corner */
-    radial-gradient(ellipse 45% 32% at 95% 5%,   rgba(0,0,0,0.28) 0%, transparent 100%),
-    /* oil smear — left-centre */
-    radial-gradient(ellipse 16% 10% at 18% 52%,  rgba(0,0,0,0.14) 0%, transparent 100%),
-    /* water stain ring — right side */
-    radial-gradient(ellipse 12% 8%  at 88% 68%,  rgba(0,0,0,0.10) 0%, transparent 100%),
-    /* ── EDGE WEAR ── */
-    linear-gradient(to right,  rgba(0,0,0,0.22) 0%, transparent 7%, transparent 93%, rgba(0,0,0,0.22) 100%),
-    linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, transparent 5%, transparent 88%, rgba(0,0,0,0.32) 100%);
-}
-
-/* ── BORDER GOUGES via SVG ──
-   Absolutely positioned SVG lines that simulate deep nicks in the metal rim */
-.calculator .gouge-svg {
-  position: absolute;
-  inset: 0;
-  border-radius: 6px 6px 8px 8px;
-  pointer-events: none;
-  z-index: 51;
-  overflow: visible;
 }
 
 /* ── BRASS TOP TRIM ── */
@@ -359,25 +295,24 @@ body {
 }
 
 .display-expr {
-  font-family: 'Crimson Pro', Georgia, serif;
+  font-family: 'Crimson Pro', serif;
   font-style: italic;
-  font-weight: 600;
-  font-size: 22px;
+  font-size: 13px;
   color: var(--display-dim);
   text-align: right;
-  min-height: 28px;
+  min-height: 18px;
   letter-spacing: 1px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   position: relative;
   z-index: 3;
 }
 
 .display-num {
-  font-family: Papyrus, 'Uncial Antiqua', fantasy;
-  font-weight: 400;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
   font-size: 44px;
   color: var(--display-ink);
   text-align: right;
@@ -458,10 +393,10 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-family: Papyrus, 'Uncial Antiqua', fantasy;
-  font-weight: 400;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
   font-size: 17px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   outline: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -534,116 +469,21 @@ body {
     inset -2px 0 4px rgba(0,0,0,0.3);
 }
 
-/* ── HIT IMPACT — screen-space burst at click position ──
-   These are spawned via JS as fixed-position divs, not inside buttons */
-.hit-impact {
-  position: fixed;
-  pointer-events: none;
-  z-index: 300;
-  /* centred on spawn point */
-  transform: translate(-50%, -50%) scale(0.3);
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(255,240,140,0.95) 0%,
-    rgba(255,190,50,0.65)  28%,
-    rgba(200,110,20,0.30)  55%,
-    transparent            75%);
-  opacity: 0;
-  animation: impactBurst 0.45s cubic-bezier(.05,.7,.2,1) forwards;
-}
-.hit-impact::before {
-  content: '';
+/* ── HIT FLASH ── */
+.btn .hit-flash {
   position: absolute;
-  inset: 6px;
-  border-radius: 50%;
-  border: 2.5px solid rgba(255,220,70,0.9);
-  box-shadow: 0 0 14px rgba(255,200,50,0.7), inset 0 0 8px rgba(255,200,50,0.3);
+  inset: 0;
+  border-radius: 4px;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(255,255,255,0.16) 0%,
+    transparent 70%);
   opacity: 0;
-  animation: impactRing1 0.45s ease-out forwards;
-}
-.hit-impact::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255,170,30,0.45);
-  opacity: 0;
-  animation: impactRing2 0.58s ease-out 0.04s forwards;
-}
-/* heavier variant for = button */
-.hit-impact.heavy {
-  width: 130px;
-  height: 130px;
-  background: radial-gradient(circle,
-    rgba(255,220,100,1.0)  0%,
-    rgba(240,150,30,0.75)  25%,
-    rgba(180,70,10,0.35)   55%,
-    transparent            75%);
-}
-
-@keyframes impactBurst {
-  0%   { opacity: 1;   transform: translate(-50%,-50%) scale(0.25); }
-  35%  { opacity: 0.9; transform: translate(-50%,-50%) scale(1.0);  }
-  100% { opacity: 0;   transform: translate(-50%,-50%) scale(1.6);  }
-}
-@keyframes impactRing1 {
-  0%   { opacity: 1;   transform: scale(0.5); }
-  50%  { opacity: 0.7; }
-  100% { opacity: 0;   transform: scale(1.7); }
-}
-@keyframes impactRing2 {
-  0%   { opacity: 0.6; transform: scale(0.7); }
-  100% { opacity: 0;   transform: scale(2.2); }
-}
-
-/* ── CUSTOM CURSOR — golden arrow ── */
-
-/* DEFAULT: dim golden arrow */
-body {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'%3E%3Cdefs%3E%3Cfilter id='g' x='-60%25' y='-60%25' width='220%25' height='220%25'%3E%3CfeGaussianBlur stdDeviation='2.0' result='blur'/%3E%3CfeComposite in='SourceGraphic' in2='blur' operator='over'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23g)'%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%237a5010' stroke='%23a07828' stroke-width='1.2' stroke-linejoin='round'/%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%23c89030' opacity='0.28'/%3E%3C/g%3E%3C/svg%3E") 3 2, auto;
-}
-
-/* HOVER ON BUTTON: bright golden arrow */
-.btn {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' viewBox='0 0 28 36'%3E%3Cdefs%3E%3Cfilter id='g' x='-60%25' y='-60%25' width='220%25' height='220%25'%3E%3CfeGaussianBlur stdDeviation='2.5' result='blur'/%3E%3CfeComposite in='SourceGraphic' in2='blur' operator='over'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23g)'%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%23f0c030' stroke='%23fff8b0' stroke-width='1.4' stroke-linejoin='round'/%3E%3Cpolygon points='3,2 3,28 9,22 14,34 17,33 12,21 20,21' fill='%23ffe87a' opacity='0.55'/%3E%3C/g%3E%3C/svg%3E") 3 2, pointer;
-}
-
-/* cursor glow element — dim by default, bright on button hover */
-#cursor-glow {
-  position: fixed;
   pointer-events: none;
-  z-index: 250;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  transform: translate(-30%, -25%);
-  /* dim default */
-  background: radial-gradient(circle,
-    rgba(200,160,50,0.7)  0%,
-    rgba(180,120,20,0.35) 40%,
-    rgba(140,90,10,0.08)  70%,
-    transparent           100%);
-  box-shadow:
-    0 0 4px  rgba(200,160,50,0.7),
-    0 0 10px rgba(170,120,20,0.35),
-    0 0 20px rgba(140,90,10,0.12);
-  left: -100px; top: -100px;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
+  animation: hitFlash 0.25s ease-out forwards;
 }
-
-/* bright state — toggled by JS when over a button */
-#cursor-glow.bright {
-  background: radial-gradient(circle,
-    rgba(255,245,140,1.0) 0%,
-    rgba(255,210,60,0.75) 35%,
-    rgba(220,150,20,0.22) 65%,
-    transparent           100%);
-  box-shadow:
-    0 0 6px  rgba(255,235,90,1.0),
-    0 0 16px rgba(255,200,50,0.7),
-    0 0 30px rgba(200,140,20,0.3);
+@keyframes hitFlash {
+  0%   { opacity: 1; transform: scale(0.7); }
+  100% { opacity: 0; transform: scale(1.15); }
 }
 
 /* ── NUM BUTTONS ── */
@@ -723,13 +563,13 @@ body {
 .btn-clear {
   background: linear-gradient(165deg, #2e1008, #221008, #180a05, #100603);
   color: #b05030;
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 2px;
 }
 .btn-fn {
   background: linear-gradient(165deg, #282618, #1e1d14, #181712, #110f0b);
   color: #7a7258;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 1px;
 }
 
@@ -779,6 +619,17 @@ body {
 }
 .calculator.quake { animation: quake 0.45s ease; }
 
+/* ── FOOTER ── */
+.calc-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: rgba(120,100,50,0.4);
+  text-shadow: none;
+}
   </style>
 </head>
 <body>
@@ -790,9 +641,6 @@ body {
   <div class="bg-veins"></div>
   <div class="bg-vignette"></div>
 </div>
-
-<!-- Mouse light canvas -->
-<canvas id="mouse-light"></canvas>
 
 <!-- Firefly canvas -->
 <canvas id="firefly-canvas"></canvas>
@@ -901,132 +749,8 @@ body {
 </script>
 
 <!-- ═══════════════════════════════════════
-     MOUSE LIGHT + CURSOR PARTICLES
+     AUDIO ENGINE  —  deep weapon impacts
 ═══════════════════════════════════════ -->
-<script>
-(function() {
-  const canvas = document.getElementById('mouse-light');
-  const ctx    = canvas.getContext('2d');
-  let W, H;
-  let mx = -999, my = -999;   // smoothed position
-  let tx = -999, ty = -999;   // raw mouse target
-  let visible = false;
-
-  // Cursor particles
-  const particles = [];
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  document.addEventListener('mousemove', e => {
-    tx = e.clientX;
-    ty = e.clientY;
-    visible = true;
-    // Spawn 1-2 particles on movement
-    if (Math.random() < 0.55) spawnParticle(tx, ty);
-  });
-  document.addEventListener('mouseleave', () => { visible = false; });
-
-  function spawnParticle(x, y) {
-    particles.push({
-      x: x + (Math.random() - 0.5) * 8,
-      y: y + (Math.random() - 0.5) * 8,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: 0.4 + Math.random() * 1.2,   // falls downward
-      size: 1.2 + Math.random() * 2.2,
-      life: 1.0,
-      decay: 0.028 + Math.random() * 0.032,
-      hue: 42 + Math.random() * 16,    // warm yellow-amber
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Smooth follow — tight easing for responsive feel
-    mx += (tx - mx) * 0.18;
-    my += (ty - my) * 0.18;
-
-    if (visible && tx > -900) {
-      // ── Layer 1: wide ambient halo ──
-      const g1 = ctx.createRadialGradient(mx, my, 0, mx, my, 200);
-      g1.addColorStop(0,   'rgba(255,210,60,0.09)');
-      g1.addColorStop(0.4, 'rgba(220,160,30,0.05)');
-      g1.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.beginPath();
-      ctx.arc(mx, my, 200, 0, Math.PI * 2);
-      ctx.fillStyle = g1;
-      ctx.fill();
-
-      // ── Layer 2: mid punch ──
-      const g2 = ctx.createRadialGradient(mx, my, 0, mx, my, 65);
-      g2.addColorStop(0,   'rgba(255,235,120,0.30)');
-      g2.addColorStop(0.5, 'rgba(240,190,50,0.14)');
-      g2.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.beginPath();
-      ctx.arc(mx, my, 65, 0, Math.PI * 2);
-      ctx.fillStyle = g2;
-      ctx.fill();
-
-      // ── Layer 3: hot bright core ──
-      const g3 = ctx.createRadialGradient(mx, my, 0, mx, my, 14);
-      g3.addColorStop(0,   'rgba(255,252,210,0.92)');
-      g3.addColorStop(0.4, 'rgba(255,220,80,0.60)');
-      g3.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.beginPath();
-      ctx.arc(mx, my, 14, 0, Math.PI * 2);
-      ctx.fillStyle = g3;
-      ctx.fill();
-
-      // ── White hot pinpoint ──
-      ctx.beginPath();
-      ctx.arc(mx, my, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,240,0.95)';
-      ctx.fill();
-    }
-
-    // ── Cursor falling particles ──
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x  += p.vx;
-      p.y  += p.vy;
-      p.vy *= 1.04;  // accelerate downward
-      p.vx *= 0.97;  // slight drag
-      p.life -= p.decay;
-
-      if (p.life <= 0) { particles.splice(i, 1); continue; }
-
-      const alpha = p.life * 0.85;
-      const r     = p.size * p.life;
-
-      // glow halo
-      const pg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 4);
-      pg.addColorStop(0,   `hsla(${p.hue},100%,75%,${alpha * 0.7})`);
-      pg.addColorStop(0.4, `hsla(${p.hue},90%,60%,${alpha * 0.25})`);
-      pg.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r * 4, 0, Math.PI * 2);
-      ctx.fillStyle = pg;
-      ctx.fill();
-
-      // bright core dot
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${p.hue + 8},100%,88%,${alpha})`;
-      ctx.fill();
-    }
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-</script>
-
-
 <script>
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let AC;
@@ -1150,49 +874,8 @@ function spawnDust(btn, count, col) {
 <!-- ═══════════════════════════════════════
      HTML STRUCTURE
 ═══════════════════════════════════════ -->
-<!-- Cursor glow -->
-<div id="cursor-glow"></div>
-
 <div class="calc-wrap">
   <div class="calculator" id="calc">
-
-    <!-- Aged / worn overlay — purely decorative -->
-    <div class="aged-overlay"></div>
-
-    <!-- Border gouges — SVG nicks in the metal rim -->
-    <svg class="gouge-svg" xmlns="http://www.w3.org/2000/svg">
-      <!-- top edge: deep nick left-of-centre -->
-      <line x1="88"  y1="0"  x2="94"  y2="3"  stroke="rgba(0,0,0,0.75)"   stroke-width="2.2"/>
-      <line x1="88"  y1="0"  x2="94"  y2="3"  stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/>
-
-      <!-- top edge: shallow scrape far right -->
-      <line x1="268" y1="1"  x2="278" y2="0"  stroke="rgba(0,0,0,0.55)"   stroke-width="1.6"/>
-      <line x1="268" y1="1"  x2="278" y2="0"  stroke="rgba(255,255,255,0.08)" stroke-width="0.6"/>
-
-      <!-- left edge: gouge mid-height -->
-      <line x1="0"  y1="148" x2="4"  y2="155" stroke="rgba(0,0,0,0.70)"   stroke-width="2.5"/>
-      <line x1="0"  y1="148" x2="4"  y2="155" stroke="rgba(255,255,255,0.10)" stroke-width="0.9"/>
-      <!-- rust bleed from left gouge -->
-      <ellipse cx="2" cy="152" rx="3" ry="5"   fill="rgba(100,35,8,0.28)"/>
-
-      <!-- right edge: impact dent upper -->
-      <line x1="360" y1="82"  x2="356" y2="88"  stroke="rgba(0,0,0,0.65)" stroke-width="2.0"/>
-      <line x1="360" y1="82"  x2="356" y2="88"  stroke="rgba(255,255,255,0.09)" stroke-width="0.7"/>
-
-      <!-- right edge: small chip lower -->
-      <polyline points="360,230 355,234 360,238" fill="none"
-        stroke="rgba(0,0,0,0.60)" stroke-width="1.8" stroke-linejoin="round"/>
-      <polyline points="360,230 355,234 360,238" fill="none"
-        stroke="rgba(255,255,255,0.07)" stroke-width="0.6" stroke-linejoin="round"/>
-
-      <!-- bottom edge: broad scrape centre -->
-      <line x1="130" y1="100%" x2="165" y2="100%" stroke="rgba(0,0,0,0.50)" stroke-width="3"
-            stroke-dasharray="6 3" transform="translate(0,-1)"/>
-      <!-- rust bleed bottom-left corner -->
-      <ellipse cx="8"   cy="95%"  rx="6" ry="4"  fill="rgba(90,28,6,0.32)"/>
-      <!-- rust bleed top-right corner -->
-      <ellipse cx="352" cy="6"    rx="5" ry="3"  fill="rgba(80,24,4,0.22)"/>
-    </svg>
 
     <div class="rivet tl"></div>
     <div class="rivet tr"></div>
@@ -1241,6 +924,8 @@ function spawnDust(btn, count, col) {
     </div>
     <div class="plate-bottom"></div>
   </div>
+
+  <div class="calc-footer">Forged in the Forbidden Lands · Est. Year Unknown</div>
 </div>
 
 <!-- ═══════════════════════════════════════
@@ -1490,97 +1175,15 @@ function spawnDust(btn, count, col) {
   }
 
   /* ────────────────────────────────────────
-     CURSOR GLOW + TRAILING PARTICLES
-  ──────────────────────────────────────── */
-  const cursorGlow = document.getElementById('cursor-glow');
-  let mouseX = -200, mouseY = -200;
-
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursorGlow.style.left = mouseX + 'px';
-    cursorGlow.style.top  = mouseY + 'px';
-  });
-
-  // Brighten glow when over any button
-  document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('mouseenter', () => cursorGlow.classList.add('bright'));
-    btn.addEventListener('mouseleave', () => cursorGlow.classList.remove('bright'));
-  });
-
-  // Trail particles — spawn every 25ms, lower movement threshold → denser trail
-  let lastTrailX = -999, lastTrailY = -999;
-  setInterval(() => {
-    const dx = mouseX - lastTrailX;
-    const dy = mouseY - lastTrailY;
-    const moved = Math.sqrt(dx*dx + dy*dy);
-    if (moved < 1.5) return;
-    lastTrailX = mouseX; lastTrailY = mouseY;
-    // spawn 2–3 particles per tick
-    const count = 2 + Math.floor(Math.random() * 2);
-    for (let i = 0; i < count; i++) spawnCursorParticle(mouseX, mouseY);
-  }, 25);
-
-  function spawnCursorParticle(x, y) {
-    const p   = document.createElement('div');
-    const sz  = 1.5 + Math.random() * 3;
-    const hue = 36 + Math.random() * 24;          // golden-amber 36–60°
-    const dur = 1.4 + Math.random() * 1.2;        // 1.4–2.6s (was 0.5–1.0s)
-    const vx  = (Math.random() - 0.5) * 22;
-    const vy  = 30 + Math.random() * 55;          // fall further down
-
-    p.style.cssText = `
-      position:fixed;
-      left:${x}px; top:${y}px;
-      width:${sz}px; height:${sz}px;
-      border-radius:50%;
-      background: hsl(${hue},100%,74%);
-      box-shadow: 0 0 ${sz * 2.5}px hsl(${hue},100%,66%);
-      opacity:0.92;
-      pointer-events:none;
-      z-index:249;
-      will-change:transform,opacity;
-      transition: transform ${dur}s cubic-bezier(.15,.6,.3,1),
-                  opacity   ${dur * 0.85}s ease-out ${dur * 0.15}s;
-      transform: translate(-50%,-50%);
-    `;
-    document.body.appendChild(p);
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      p.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px)) scale(0.1)`;
-      p.style.opacity = '0';
-    }));
-    setTimeout(() => p.remove(), dur * 1000 + 80);
-  }
-
-  /* ────────────────────────────────────────
-     SCREEN-SPACE HIT IMPACT
-  ──────────────────────────────────────── */
-  function spawnHitImpact(x, y, heavy = false) {
-    const el = document.createElement('div');
-    el.className = heavy ? 'hit-impact heavy' : 'hit-impact';
-    el.style.left = x + 'px';
-    el.style.top  = y + 'px';
-    document.body.appendChild(el);
-    el.addEventListener('animationend', () => el.remove(), { once: true });
-
-    // Extra ember sparks on heavy hit
-    if (heavy) {
-      for (let i = 0; i < 12; i++) spawnCursorParticle(x, y);
-    } else {
-      for (let i = 0; i < 4; i++) spawnCursorParticle(x, y);
-    }
-  }
-
-  /* ────────────────────────────────────────
      BUTTON DISPATCH
   ──────────────────────────────────────── */
-  function handleBtn(btn, px, py) {
+  function handleBtn(btn) {
     const action = btn.dataset.action;
 
-    // Screen-space impact at pointer position
-    const heavy = (action === 'equals');
-    spawnHitImpact(px, py, heavy);
+    const flash = document.createElement('div');
+    flash.className = 'hit-flash';
+    btn.appendChild(flash);
+    flash.addEventListener('animationend', () => flash.remove());
 
     switch (action) {
       case 'num':
@@ -1625,10 +1228,7 @@ function spawnDust(btn, count, col) {
      POINTER EVENTS
   ──────────────────────────────────────── */
   document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('pointerdown', e => {
-      btn.classList.add('pressed');
-      handleBtn(btn, e.clientX, e.clientY);
-    });
+    btn.addEventListener('pointerdown',  () => { btn.classList.add('pressed'); handleBtn(btn); });
     btn.addEventListener('pointerup',    () => btn.classList.remove('pressed'));
     btn.addEventListener('pointerleave', () => btn.classList.remove('pressed'));
     btn.addEventListener('pointercancel',() => btn.classList.remove('pressed'));
@@ -1670,8 +1270,7 @@ function spawnDust(btn, count, col) {
     if (btn) {
       e.preventDefault();
       btn.classList.add('pressed');
-      const r = btn.getBoundingClientRect();
-      handleBtn(btn, r.left + r.width / 2, r.top + r.height / 2);
+      handleBtn(btn);
       setTimeout(() => btn.classList.remove('pressed'), 140);
     }
   });
