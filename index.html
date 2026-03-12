@@ -182,9 +182,8 @@ body {
     /* right edge shadow */
     inset -3px 0 6px rgba(0,0,0,0.25);
 
-  /* subtle 3D tilt */
+  /* subtle 3D tilt — no preserve-3d, it breaks button hit-testing */
   transform: rotateX(2deg);
-  transform-style: preserve-3d;
 }
 
 /* ── BRASS TOP TRIM ── */
@@ -382,6 +381,9 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
+  /* extra room so translateY(7px) pressed buttons aren't clipped */
+  padding-bottom: 10px;
+  margin-bottom: -10px;
 }
 
 /* ── BASE BUTTON — cast iron key ── */
@@ -767,120 +769,62 @@ function playImpact(type) {
   initAC();
   const t = AC.currentTime;
 
-  if (type === 'num') {
-    /* heavy stone key strike — deep thud, no treble */
-    const nSrc  = AC.createBufferSource();
-    nSrc.buffer = noiseBuffer(0.25, 2.2);
-    const nFilt = AC.createBiquadFilter();
-    nFilt.type = 'lowpass'; nFilt.frequency.value = 160;
-    const nGain = AC.createGain();
-    nGain.gain.setValueAtTime(1.2, t);
-    nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-    nSrc.connect(nFilt); nFilt.connect(nGain); nGain.connect(AC.destination);
-    nSrc.start(t);
+  // Shared builder: noise thud + sub sine
+  // weight 0–1 controls heaviness, pitch controls sub freq
+  function thud(weight, subFreq, subDecay, noiseDecay, noiseFilter) {
+    // noise body
+    const buf  = AC.createBuffer(1, AC.sampleRate * (0.15 + weight * 0.35), AC.sampleRate);
+    const d    = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++)
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, noiseDecay);
+    const src  = AC.createBufferSource();
+    src.buffer = buf;
+    const filt = AC.createBiquadFilter();
+    filt.type = 'lowpass';
+    filt.frequency.value = noiseFilter;
+    const gain = AC.createGain();
+    gain.gain.setValueAtTime(0.6 + weight * 1.0, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12 + weight * 0.3);
+    src.connect(filt); filt.connect(gain); gain.connect(AC.destination);
+    src.start(t);
 
-    /* sub thud oscillator */
+    // sub sine — the actual "thud" feeling
     const sub  = AC.createOscillator();
     const subG = AC.createGain();
     sub.type = 'sine';
-    sub.frequency.setValueAtTime(80, t);
-    sub.frequency.exponentialRampToValueAtTime(38, t + 0.18);
-    subG.gain.setValueAtTime(0.7, t);
-    subG.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    sub.frequency.setValueAtTime(subFreq, t);
+    sub.frequency.exponentialRampToValueAtTime(subFreq * 0.4, t + subDecay);
+    subG.gain.setValueAtTime(0.5 + weight * 0.7, t);
+    subG.gain.exponentialRampToValueAtTime(0.001, t + subDecay);
     sub.connect(subG); subG.connect(AC.destination);
-    sub.start(t); sub.stop(t + 0.2);
+    sub.start(t); sub.stop(t + subDecay + 0.05);
+  }
+
+  if (type === 'num') {
+    // lightest thud — finger on stone
+    thud(0.2, 90, 0.14, 2.5, 180);
 
   } else if (type === 'op') {
-    /* iron ring — mid thud + metallic resonance */
-    const nSrc  = AC.createBufferSource();
-    nSrc.buffer = noiseBuffer(0.3, 1.6);
-    const nFilt = AC.createBiquadFilter();
-    nFilt.type = 'bandpass'; nFilt.frequency.value = 220; nFilt.Q.value = 1.2;
-    const nGain = AC.createGain();
-    nGain.gain.setValueAtTime(1.0, t);
-    nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-    nSrc.connect(nFilt); nFilt.connect(nGain); nGain.connect(AC.destination);
-    nSrc.start(t);
-
-    /* sub thud */
-    const sub  = AC.createOscillator();
-    const subG = AC.createGain();
-    sub.type = 'sine';
-    sub.frequency.setValueAtTime(110, t);
-    sub.frequency.exponentialRampToValueAtTime(50, t + 0.2);
-    subG.gain.setValueAtTime(0.6, t);
-    subG.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-    sub.connect(subG); subG.connect(AC.destination);
-    sub.start(t); sub.stop(t + 0.22);
-
-    /* high-iron ring overtone */
-    const ring  = AC.createOscillator();
-    const ringG = AC.createGain();
-    ring.type = 'triangle';
-    ring.frequency.setValueAtTime(520, t);
-    ring.frequency.exponentialRampToValueAtTime(320, t + 0.18);
-    ringG.gain.setValueAtTime(0.12, t);
-    ringG.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-    ring.connect(ringG); ringG.connect(AC.destination);
-    ring.start(t); ring.stop(t + 0.25);
+    // medium thud — heavier key
+    thud(0.5, 70, 0.20, 2.0, 160);
 
   } else if (type === 'eq') {
-    /* greatsword slam — massive low impact + long resonance decay */
-    const nSrc  = AC.createBufferSource();
-    nSrc.buffer = noiseBuffer(0.6, 1.2);
-    const nFilt = AC.createBiquadFilter();
-    nFilt.type = 'lowpass'; nFilt.frequency.value = 180;
-    const nGain = AC.createGain();
-    nGain.gain.setValueAtTime(1.8, t);
-    nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
-    nSrc.connect(nFilt); nFilt.connect(nGain); nGain.connect(AC.destination);
-    nSrc.start(t);
-
-    /* deep sub (ground shake) */
-    const sub  = AC.createOscillator();
-    const subG = AC.createGain();
-    sub.type = 'sine';
-    sub.frequency.setValueAtTime(55, t);
-    sub.frequency.exponentialRampToValueAtTime(28, t + 0.45);
-    subG.gain.setValueAtTime(1.1, t);
-    subG.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
-    sub.connect(subG); subG.connect(AC.destination);
-    sub.start(t); sub.stop(t + 0.5);
-
-    /* weapon ring-outs */
-    [95, 190, 285, 420].forEach((freq, i) => {
-      const o = AC.createOscillator();
-      const g = AC.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(freq, t + i * 0.018);
-      o.frequency.exponentialRampToValueAtTime(freq * 0.8, t + 0.65);
-      g.gain.setValueAtTime(0.22 - i * 0.04, t + i * 0.018);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.65);
-      o.connect(g); g.connect(AC.destination);
-      o.start(t + i * 0.018); o.stop(t + 0.7);
-    });
+    // heaviest thud — greatsword slam
+    thud(1.0, 52, 0.38, 1.6, 140);
+    // second sub layer for depth
+    const sub2  = AC.createOscillator();
+    const sub2G = AC.createGain();
+    sub2.type = 'sine';
+    sub2.frequency.setValueAtTime(30, t + 0.02);
+    sub2.frequency.exponentialRampToValueAtTime(18, t + 0.42);
+    sub2G.gain.setValueAtTime(0.55, t + 0.02);
+    sub2G.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+    sub2.connect(sub2G); sub2G.connect(AC.destination);
+    sub2.start(t + 0.02); sub2.stop(t + 0.45);
 
   } else if (type === 'clear') {
-    /* stone scrape + bass release */
-    const nSrc  = AC.createBufferSource();
-    nSrc.buffer = noiseBuffer(0.35, 0.9);
-    const nFilt = AC.createBiquadFilter();
-    nFilt.type = 'bandpass'; nFilt.frequency.value = 300; nFilt.Q.value = 0.6;
-    const nGain = AC.createGain();
-    nGain.gain.setValueAtTime(0.7, t);
-    nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-    nSrc.connect(nFilt); nFilt.connect(nGain); nGain.connect(AC.destination);
-    nSrc.start(t);
-
-    const sub  = AC.createOscillator();
-    const subG = AC.createGain();
-    sub.type = 'sine';
-    sub.frequency.setValueAtTime(65, t);
-    sub.frequency.exponentialRampToValueAtTime(30, t + 0.25);
-    subG.gain.setValueAtTime(0.4, t);
-    subG.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-    sub.connect(subG); subG.connect(AC.destination);
-    sub.start(t); sub.stop(t + 0.28);
+    // stone scrape — slightly higher filter, shorter decay
+    thud(0.35, 75, 0.17, 1.4, 220);
   }
 }
 </script>
